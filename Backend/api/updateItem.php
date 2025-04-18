@@ -1,47 +1,47 @@
 <?php
 
-header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: PATCH");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Credentials: true");
-
+require_once "../config/session_cors.php";
 require_once "../config/DBConnexion.php";
+require_once "../models/Item.php";
 
 try {
+
+    $user_id = checkUserAuth("UpdateItem");
+    // $user_id = 1; // Pour les tests, on simule un utilisateur connecté avec ID 1
     // Connexion à la base de données
     $db = DBConnexion::getInstance()->getConnection();
 
+    $itemModel = new Item($db, $user_id);
     // Récupérer les données JSON envoyées par le frontend
     $data = json_decode(file_get_contents("php://input"), true);
 
     $id = $data['id'];
     $title = $data['title'];
     $description = $data['description'];
-    $date = $data['date'];
 
-
-    // Vérifier que les données nécessaires sont présentes
     if (!isset($id) || !isset($title) || !isset($description)) {
         throw new Exception("Les champs 'title' et 'description' sont requis.");
     }
-    // Requête pour insérer un nouvel item
-    $stmt = $db->prepare("UPDATE items SET title = :title, description = :description, modified_at = :date WHERE id = :id");
-    $stmt->bindParam(':title', $title);
-    $stmt->bindParam(':description', $description);
-    $stmt->bindParam(':date', $date);
-    $stmt->bindParam(':id', $id);
-    $stmt->execute();
+
+    $itemUpdated = $itemModel->update($id, $title, $description);
 
     // Envoi de la réponse JSON
-    echo json_encode([
-        "success" => true,
-        "message" => "Item modifié avec succès"
+    sendJsonResponse(true, "Item mis à jour avec succès", [
+        "item" => $itemUpdated
     ]);
 } catch (Exception $e) {
     // Gestion des erreurs
-    echo json_encode([
-        "success" => false,
-        "message" => "Une erreur est survenue : " . $e->getMessage()
-    ]);
+    $message = $e->getMessage();
+    $code = 500; // Code par défaut
+
+    // Adapter le code HTTP en fonction du message d'erreur
+    if (strpos($message, "non connecté") !== false) {
+        $code = 401; // Non autorisé
+    } else if (strpos($message, "non autorisée") !== false) {
+        $code = 403; // Interdit
+    } else if (strpos($message, "introuvable") !== false) {
+        $code = 404; // Non trouvé
+    }
+    
+    sendJsonResponse(false, "Erreur : " . $message, [], $code);
 }

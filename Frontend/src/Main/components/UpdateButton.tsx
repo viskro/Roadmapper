@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
-import { API_ENDPOINTS, apiPatch } from "@/utils/apiUtils"
+import { API_ENDPOINTS, apiPut } from "@/utils/apiUtils"
 import { handleError, handleApiError } from "@/utils/errorUtils"
 
 interface UpdateButtonProps {
@@ -39,7 +39,7 @@ export function UpdateButton(props: UpdateButtonProps) {
         setError(null);
 
         try {
-            const result = await apiPatch(API_ENDPOINTS.UPDATE_ITEM, { 
+            const result = await apiPut(API_ENDPOINTS.UPDATE_ITEM, { 
                 id, 
                 title, 
                 description, 

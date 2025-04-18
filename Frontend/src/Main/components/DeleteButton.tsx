@@ -17,10 +17,10 @@ export default function DeleteButton({ id, onItemDeleted }: DeleteButtonProps) {
         if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet item ? Cette action est irréversible.")) {
             return;
         }
-
+        
         setLoading(true);
         setError(null);
-
+        console.log(error);
         try {
             const result = await apiPost(API_ENDPOINTS.DELETE_ITEM, { id } as Record<string, unknown>);
 

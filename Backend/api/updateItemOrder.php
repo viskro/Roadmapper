@@ -34,8 +34,8 @@ require_once "../models/Item.php";
 try {
     // Vérifier si l'utilisateur est connecté
     // La fonction checkUserAuth lance une exception si l'utilisateur n'est pas connecté
-    $user_id = checkUserAuth("UpdateItemOrder");
-
+   $user_id = checkUserAuth("UpdateItemOrder");
+    // $user_id = 1; // Pour les tests, on simule un utilisateur connecté avec ID 1
     // Établir la connexion à la base de données via le singleton DBConnexion
     $db = DBConnexion::getInstance()->getConnection();
     

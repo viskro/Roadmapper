@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { apiPost, API_ENDPOINTS } from "@/utils/apiUtils";
+import { handleError, handleApiError } from "@/utils/errorUtils";
 
 export function CreateRoadmap() {
     const [name, setName] = useState("");
@@ -40,28 +42,21 @@ export function CreateRoadmap() {
                 throw new Error("Veuillez remplir tous les champs obligatoires.");
             }
 
-            const response = await fetch("http://localhost/projetWKS/Backend/api/addRoadmap.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify({ name, description, category }),
-            });
+            const result = await apiPost(API_ENDPOINTS.ADD_ROADMAP, {
+                name,
+                description,
+                category
+            
+            }as Record<string, unknown>);
 
-            const result = await response.json();
-
-            if (result.success) {
-                setSuccess(result.message);
-                // Rediriger vers la nouvelle roadmap après 2 secondes
-                setTimeout(() => {
-                    navigate(`/roadmap/${result.data.slug}`);
-                }, 2000);
-            } else {
-                setError(result.message);
+            if (handleApiError(result, setError, "créer la roadmap")) {
+                setSuccess("Roadmap créée avec succès !");
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                navigate(`/roadmap/${result.data?.slug}`);
             }
+
         } catch (error) {
-            setError(error instanceof Error ? error.message : "Une erreur est survenue.");
+            handleError(error, setError, "créer la roadmap");
         } finally {
             setLoading(false);
         }

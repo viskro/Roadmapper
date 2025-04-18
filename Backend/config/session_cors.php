@@ -106,6 +106,9 @@ else if ($request_method === 'PATCH' || $request_method === 'OPTIONS') {
 else if ($request_method === 'DELETE' || $request_method === 'OPTIONS') {
     header("Access-Control-Allow-Methods: DELETE, OPTIONS");
 }
+else if ($request_method === 'PUT' || $request_method === 'OPTIONS') {
+    header("Access-Control-Allow-Methods: PUT, OPTIONS");
+}
 
 /**
  * Gestion des requêtes OPTIONS (pre-flight)
