@@ -13,7 +13,7 @@
  */
 
 // Configuration de base de l'API
-const API_BASE_URL = "http://localhost/projetWKS/Backend/api";
+const API_BASE_URL = "http://localhost:8081/Roadmapper/Backend/api";
 
 // Points d'entrée de l'API
 export const API_ENDPOINTS = {
@@ -170,4 +170,31 @@ export async function apiDelete<T = Record<string, unknown>>(
             message: "Erreur de connexion au serveur"
         };
     }
+
+}
+export async function apiPut<T = Record<string, unknown>>(
+    url: string, 
+    data: Record<string, unknown>
+): Promise<ApiResponse<T>> {
+     try { 
+        console.log("URL:", url);
+        const response = await fetch(url, {
+            ...BASE_FETCH_OPTIONS,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+
+            },
+            body: JSON.stringify(data)
+        });
+        
+        
+        return await response.json();
+     } catch (error) {
+        console.error(`Erreur lors de l'appel PUT à ${url}:`, error);
+        return {
+            success: false,
+            message: "Erreur de connexion au serveur"
+        };
+    } 
 }

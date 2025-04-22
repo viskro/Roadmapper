@@ -74,9 +74,27 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     // États du composant
     const [searchQuery, setSearchQuery] = React.useState<string>("");
     const [userRoadmaps, setUserRoadmaps] = React.useState<Roadmap[]>([]);
-    const [categorizedRoadmaps, setCategorizedRoadmaps] = React.useState<CategorizedRoadmaps>({});
     const [loading, setLoading] = React.useState<boolean>(false);
     const [error, setError] = React.useState<string | null>(null);
+
+    /**
+     * Dériver categorizedRoadmaps de userRoadmaps
+     * Utilise useMemo pour calculer la structure organisée par catégorie
+     * uniquement lorsque userRoadmaps change
+     */
+    const categorizedRoadmaps = React.useMemo(() => {
+        const result: CategorizedRoadmaps = {};
+        
+        userRoadmaps.forEach((roadmap) => {
+            const category = roadmap.category;
+            if (!result[category]) {
+                result[category] = [];
+            }
+            result[category].push(roadmap);
+        });
+        
+        return result;
+    }, [userRoadmaps]);
 
     /**
      * Effet pour charger les roadmaps de l'utilisateur au chargement
@@ -93,14 +111,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     const result = await fetchUserRoadmapsApi();
                     
                     if (handleApiError(result, setError, "récupération des roadmaps")) {
-                        if (result.data) {
+                        if (result.data && result.data.roadmaps) {
                             // Mise à jour des états avec les données reçues
                             setUserRoadmaps(Array.isArray(result.data.roadmaps) ? result.data.roadmaps : []);
-                            if (result.data.categorized && typeof result.data.categorized === 'object') {
-                                setCategorizedRoadmaps(result.data.categorized as CategorizedRoadmaps);
-                            } else {
-                                setCategorizedRoadmaps({});
-                            }
                         }
                     }
                 } catch (error) {
@@ -204,6 +217,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 {/* Indicateurs d'état (chargement, erreur, vide) */}
                 {loading && <p className="text-sm text-muted-foreground">Chargement...</p>}
                 {error && <p className="text-sm text-red-500">{error}</p>}
+                
+                {/* Ajouter un indicateur du nombre total de roadmaps pour utiliser userRoadmaps */}
+                {!loading && !error && (
+                    <p className="text-sm text-muted-foreground mb-2">
+                        Total : {userRoadmaps.length} roadmap(s)
+                    </p>
+                )}
                 
                 {!loading && Object.keys(filteredRoadmaps).length === 0 && (
                     <p className="text-sm text-muted-foreground">

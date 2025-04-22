@@ -11,7 +11,7 @@
  * de l'application, facilitant ainsi la maintenance et réduisant la duplication de code.
  */
 
-import { API_ENDPOINTS, apiGet, apiPatch, ApiResponse } from "./apiUtils";
+import { API_ENDPOINTS, apiGet, apiPatch, apiPut, ApiResponse } from "./apiUtils";
 
 // Types
 /**
@@ -129,5 +129,6 @@ export const fetchUserRoadmapsApi = async (): Promise<ApiResponse> => {
  * @returns Une promesse qui se résout avec la réponse API typée
  */
 export const updateItemOrderApi = async (id: number, direction: "up" | "down"): Promise<ApiResponse> => {
-    return await apiPatch(API_ENDPOINTS.UPDATE_ITEM_ORDER, { id, direction } as Record<string, unknown>);
+    console.log("updateItemOrderApi", id, direction);
+    return await apiPut(API_ENDPOINTS.UPDATE_ITEM_ORDER, { id, direction } as Record<string, unknown>);
 }; 
