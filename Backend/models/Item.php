@@ -169,6 +169,17 @@ class Item {
      * - qu'il n'est pas déjà en première position (pour "up")
      * - qu'il n'est pas déjà en dernière position (pour "down")
      * 
+     * Algorithme de fonctionnement:
+     * 1. Récupération de l'item actuel et de son ordre d'affichage
+     * 2. Vérification des limites (min/max) d'ordre dans la roadmap
+     * 3. Calcul du nouvel ordre basé sur la direction demandée
+     * 4. Identification de l'item qui occupe actuellement la position cible
+     * 5. Échange des positions entre les deux items (permutation des valeurs de 'item_order')
+     * 
+     * Sécurité:
+     * - Toutes les requêtes SQL filtrent par user_id pour empêcher la manipulation d'items d'autres utilisateurs
+     * - Les transactions ne sont pas utilisées ici, mais pourraient être ajoutées pour garantir l'atomicité de l'échange
+     * 
      * @param int $id ID de l'item dont l'ordre doit être modifié
      * @param string $direction Direction du déplacement ("up" pour monter, "down" pour descendre)
      * @return bool Succès de l'opération
@@ -205,10 +216,11 @@ class Item {
                 : "L'élément est déjà en dernière position");
         }
 
-        // Calculer le nouvel ordre selon la direction
+        // Calculer le nouvel ordre selon la direction (décrémentation pour "up", incrémentation pour "down")
         $newOrder = ($direction === "up") ? $currentOrder - 1 : $currentOrder + 1;
 
         // Trouver l'item qui a actuellement l'ordre que nous voulons attribuer à notre item
+        // Cet item sera déplacé à la position de notre item actuel (échange de positions)
         $stmt = $this->db->prepare("SELECT id FROM items WHERE `item_order` = :newOrder AND roadmap_id = :roadmap_id AND user_id = :user_id");
         $stmt->bindParam(':newOrder', $newOrder, PDO::PARAM_INT);
         $stmt->bindParam(':roadmap_id', $roadmapId, PDO::PARAM_INT);
@@ -217,7 +229,8 @@ class Item {
         $otherItem = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($otherItem) {
-            // Échanger les ordres entre les deux items
+            // Échanger les ordres entre les deux items:
+            // L'autre item prend l'ancienne position de notre item actuel
             $stmt = $this->db->prepare("UPDATE items SET `item_order` = :currentOrder WHERE id = :otherId AND user_id = :user_id");
             $stmt->bindParam(':currentOrder', $currentOrder, PDO::PARAM_INT);
             $stmt->bindParam(':otherId', $otherItem['id'], PDO::PARAM_INT);
@@ -225,7 +238,7 @@ class Item {
             $stmt->execute();
         }
 
-        // Mettre à jour l'ordre de l'item actuel
+        // Mettre à jour l'ordre de l'item actuel vers sa nouvelle position
         $stmt = $this->db->prepare("UPDATE items SET `item_order` = :newOrder WHERE id = :id AND user_id = :user_id");
         $stmt->bindParam(':newOrder', $newOrder, PDO::PARAM_INT);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);

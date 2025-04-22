@@ -40,7 +40,7 @@ export function UpdateButton(props: UpdateButtonProps) {
 
         try {
             const result = await apiPut(API_ENDPOINTS.UPDATE_ITEM, { 
-                id, 
+                id,
                 title, 
                 description, 
                 date 

@@ -80,35 +80,8 @@ header("Content-Type: application/json");                    // Toutes les répo
 header("Access-Control-Allow-Origin: http://localhost:5173"); // Seule cette origine peut accéder à l'API
 header("Access-Control-Allow-Headers: Content-Type");         // Autorise l'en-tête Content-Type dans les requêtes
 header("Access-Control-Allow-Credentials: true");             // Autorise l'envoi des cookies d'authentification
-
-/**
- * Configuration des en-têtes CORS spécifiques selon la méthode HTTP
- * 
- * Cette section définit dynamiquement les méthodes HTTP autorisées en fonction
- * de la requête actuelle. Cela permet de limiter les méthodes accessibles pour
- * chaque endpoint de l'API, renforçant ainsi la sécurité.
- */
-$request_method = $_SERVER['REQUEST_METHOD'];
-
-// Configuration adaptée selon la méthode HTTP de la requête actuelle
-if ($request_method === 'GET' || $request_method === 'OPTIONS') {
-    header("Access-Control-Allow-Methods: GET, OPTIONS");
-} 
-// Configuration pour POST et OPTIONS
-else if ($request_method === 'POST' || $request_method === 'OPTIONS') {
-    header("Access-Control-Allow-Methods: POST, OPTIONS");
-} 
-// Configuration pour PATCH et OPTIONS
-else if ($request_method === 'PATCH' || $request_method === 'OPTIONS') {
-    header("Access-Control-Allow-Methods: PATCH, OPTIONS");
-} 
-// Configuration pour DELETE et OPTIONS
-else if ($request_method === 'DELETE' || $request_method === 'OPTIONS') {
-    header("Access-Control-Allow-Methods: DELETE, OPTIONS");
-}
-else if ($request_method === 'PUT' || $request_method === 'OPTIONS') {
-    header("Access-Control-Allow-Methods: PUT, OPTIONS");
-}
+// Autoriser toutes les méthodes nécessaires dans chaque requête pour éviter les problèmes de CORS
+header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS"); 
 
 /**
  * Gestion des requêtes OPTIONS (pre-flight)
@@ -118,6 +91,7 @@ else if ($request_method === 'PUT' || $request_method === 'OPTIONS') {
  * Cette section répond à ces requêtes avec un code 200 et arrête l'exécution du script,
  * car ces requêtes ne nécessitent pas de traitement supplémentaire.
  */
+$request_method = $_SERVER['REQUEST_METHOD'];
 if ($request_method === 'OPTIONS') {
     http_response_code(200);  // Réponse positive aux vérifications pre-flight
     exit;  // Arrêt du script pour les requêtes OPTIONS

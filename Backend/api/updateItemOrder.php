@@ -9,9 +9,9 @@
  * modifiant ainsi son ordre d'affichage par rapport aux autres items.
  * Elle nécessite que l'utilisateur soit authentifié et qu'il soit propriétaire de l'item.
  * 
- * Méthode: PATCH
+ * Méthode: PUT
+ * URL: updateItemOrder.php/{id} où {id} est l'identifiant de l'item à déplacer
  * Paramètres (JSON):
- * - id: ID de l'item à déplacer
  * - direction: Direction du déplacement ("up" pour monter, "down" pour descendre)
  * 
  * Réponses:
@@ -31,11 +31,16 @@ require_once "../config/session_cors.php";
 require_once "../config/DBConnexion.php";
 require_once "../models/Item.php";
 
+// Vérification du type de requête
+if ($_SERVER['REQUEST_METHOD'] !== 'PUT' && $_SERVER['REQUEST_METHOD'] !== 'OPTIONS') {
+    sendJsonResponse(false, "Méthode HTTP non autorisée. Utilisez PUT pour cette API.", [], 405);
+}
+
 try {
     // Vérifier si l'utilisateur est connecté
     // La fonction checkUserAuth lance une exception si l'utilisateur n'est pas connecté
    $user_id = checkUserAuth("UpdateItemOrder");
-    // $user_id = 1; // Pour les tests, on simule un utilisateur connecté avec ID 1
+    
     // Établir la connexion à la base de données via le singleton DBConnexion
     $db = DBConnexion::getInstance()->getConnection();
     
@@ -43,16 +48,31 @@ try {
     // Le modèle Item s'assurera que l'utilisateur ne peut modifier que ses propres items
     $itemModel = new Item($db, $user_id);
     
+    // Récupérer l'ID de l'item depuis l'URL
+    // Format attendu: /api/updateItemOrder.php/123 où 123 est l'ID de l'item
+    $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $path_segments = explode('/', rtrim($url_path, '/'));
+    $id = end($path_segments);
+    
+    // Vérifier que l'ID est un nombre valide
+    if (!is_numeric($id)) {
+        sendJsonResponse(false, "Identifiant d'item invalide dans l'URL", [], 400);
+    }
+    
+    // Conversion explicite en entier pour sécurité
+    $id = (int)$id;
+    
     // Récupérer et décoder les données JSON envoyées par le frontend
-    $data = json_decode(file_get_contents("php://input"), true);
+    $input = file_get_contents("php://input");
+    $data = json_decode($input, true);
+    
     
     // Validation des données reçues
-    if (!is_array($data) || !isset($data['id']) || !isset($data['direction'])) {
-        sendJsonResponse(false, "Paramètres invalides: l'ID de l'item et la direction sont requis", [], 400);
+    if (!is_array($data) || !isset($data['direction'])) {
+        sendJsonResponse(false, "Paramètre invalide: la direction est requise", [], 400);
     }
 
     // Extraction des données validées
-    $id = (int)$data['id']; // Conversion explicite en entier pour sécurité
     $direction = $data['direction'];
     
     // Vérification supplémentaire de la validité de la direction
@@ -83,6 +103,9 @@ try {
                strpos($message, "déjà en dernière position") !== false) {
         $code = 409; // Conflit
     }
+    
+    // Log pour débogage
+    error_log("UpdateItemOrder - Erreur: " . $message);
     
     // Envoi de la réponse d'erreur avec le code HTTP approprié
     sendJsonResponse(false, "Erreur : " . $message, [], $code);

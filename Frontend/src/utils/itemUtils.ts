@@ -11,7 +11,7 @@
  * de l'application, facilitant ainsi la maintenance et réduisant la duplication de code.
  */
 
-import { API_ENDPOINTS, apiGet, apiPatch, apiPut, ApiResponse } from "./apiUtils";
+import { API_ENDPOINTS, apiGet, apiPut, ApiResponse } from "./apiUtils";
 
 // Types
 /**
@@ -122,13 +122,24 @@ export const fetchUserRoadmapsApi = async (): Promise<ApiResponse> => {
 };
 
 /**
- * Met à jour l'ordre d'un item dans sa roadmap
+ * Met à jour l'ordre d'affichage d'un item
  * 
- * @param id L'ID de l'item à déplacer
- * @param direction La direction du déplacement ("up" pour monter, "down" pour descendre)
- * @returns Une promesse qui se résout avec la réponse API typée
+ * Cette fonction permet de déplacer un item vers le haut ou vers le bas
+ * dans une roadmap en utilisant l'API updateItemOrder.
+ * 
+ * Utilisation: 
+ * ```typescript
+ * // Déplacer l'item avec ID 123 vers le haut
+ * updateItemOrderApi(123, "up"); 
+ * ```
+ * 
+ * Conforme aux principes RESTful, l'ID est ajouté dans l'URL.
+ * 
+ * @param id Identifiant de l'item à déplacer
+ * @param direction Direction du déplacement ("up" pour monter, "down" pour descendre)
+ * @returns Promesse contenant la réponse de l'API
  */
 export const updateItemOrderApi = async (id: number, direction: "up" | "down"): Promise<ApiResponse> => {
-    console.log("updateItemOrderApi", id, direction);
+    // L'ID est passé à la fois dans l'objet de données et sera extrait pour l'URL
     return await apiPut(API_ENDPOINTS.UPDATE_ITEM_ORDER, { id, direction } as Record<string, unknown>);
 }; 

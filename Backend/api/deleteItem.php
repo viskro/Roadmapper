@@ -10,24 +10,28 @@
  * de l'item.
  * 
  * Méthode: DELETE
- * Paramètres (JSON):
- * - id: ID de l'item à supprimer (obligatoire)
+ * URL: deleteItem.php/{id} où {id} est l'identifiant de l'item à supprimer
  * 
  * Réponses:
  * - 200: Opération réussie, l'item a été supprimé
- * - 400: Paramètre manquant (id)
+ * - 400: Identifiant invalide dans l'URL
  * - 401: Utilisateur non authentifié
  * - 403: L'utilisateur n'est pas autorisé à supprimer cet item
  * - 404: Item non trouvé
  * - 500: Erreur serveur
  * 
- * @version 1.0
+ * @version 1.1
  */
 
 // Inclusion des fichiers nécessaires
 require_once "../config/session_cors.php";
 require_once "../config/DBConnexion.php";
 require_once "../models/Item.php";
+
+// Vérification du type de requête
+if ($_SERVER['REQUEST_METHOD'] !== 'DELETE' && $_SERVER['REQUEST_METHOD'] !== 'OPTIONS') {
+    sendJsonResponse(false, "Méthode HTTP non autorisée. Utilisez DELETE pour cette API.", [], 405);
+}
 
 try {
     // Vérifier si l'utilisateur est connecté
@@ -40,16 +44,19 @@ try {
     // Initialiser le modèle Item
     $itemModel = new Item($db, $user_id);
 
-    // Récupérer et décoder les données JSON envoyées par le frontend
-    $data = json_decode(file_get_contents("php://input"), true);
+    // Récupérer l'ID de l'item depuis l'URL
+    // Format attendu: /api/deleteItem.php/123 où 123 est l'ID de l'item
+    $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $path_segments = explode('/', rtrim($url_path, '/'));
+    $id = end($path_segments);
     
-    // Vérifier que l'ID de l'item est fourni
-    if (!isset($data['id'])) {
-        sendJsonResponse(false, "Paramètre manquant: l'ID de l'item est requis", [], 400);
+    // Vérifier que l'ID est un nombre valide
+    if (!is_numeric($id)) {
+        sendJsonResponse(false, "Identifiant d'item invalide dans l'URL", [], 400);
     }
-
-    // Extraire et convertir l'ID de l'item
-    $id = (int)$data['id']; // Conversion explicite en entier pour sécurité
+    
+    // Conversion explicite en entier pour sécurité
+    $id = (int)$id;
     
     // Vérifier que l'item existe et appartient à l'utilisateur
     $item = $itemModel->getById($id);
@@ -81,7 +88,7 @@ try {
         $code = 403; // Interdit
     } else if (strpos($message, "non trouvé") !== false) {
         $code = 404; // Non trouvé
-    } else if (strpos($message, "manquant") !== false) {
+    } else if (strpos($message, "invalide") !== false) {
         $code = 400; // Requête incorrecte
     }
     

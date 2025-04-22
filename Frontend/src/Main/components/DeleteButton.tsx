@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Trash2, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { API_ENDPOINTS, apiPost } from "@/utils/apiUtils";
+import { API_ENDPOINTS, apiDelete } from "@/utils/apiUtils";
 import { handleError, handleApiError } from "@/utils/errorUtils";
 
 interface DeleteButtonProps {
@@ -22,7 +22,7 @@ export default function DeleteButton({ id, onItemDeleted }: DeleteButtonProps) {
         setError(null);
         console.log(error);
         try {
-            const result = await apiPost(API_ENDPOINTS.DELETE_ITEM, { id } as Record<string, unknown>);
+            const result = await apiDelete(API_ENDPOINTS.DELETE_ITEM, { id } as Record<string, unknown>);
 
             if (handleApiError(result, setError, "suppression d'un item")) {
                 console.log("Item supprimé avec succès");
