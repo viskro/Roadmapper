@@ -12,7 +12,7 @@
  * et de réorganiser les éléments d'une roadmap.
  */
 
-import { Card, CardContent, CardFooter, CardHeader } from "../../components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "../../../components/ui/card";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import DeleteButton from "./DeleteButton"
 import { UpdateButton } from "./UpdateButton";

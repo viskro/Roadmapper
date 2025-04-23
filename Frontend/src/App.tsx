@@ -6,7 +6,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-
 import { Register } from './components/components/Auth/Register';
 import { Login } from './components/components/Auth/Login';
 import { useAuth } from './context/AuthContext';
-import { CreateRoadmap } from './components/components/Roadmap/CreateRoadmap';
+import { CreateRoadmap } from './Main/components/Roadmap/CreateRoadmap';
+import Dashboard from './Main/components/Roadmap/Dashboard';
 
 // Composant pour protéger les routes nécessitant une authentification
 const ProtectedRoute = () => {
@@ -40,6 +41,9 @@ function App() {
           <Route element={<ProtectedRoute />}>
             {/* Page d'accueil et tableau de bord */}
             <Route path="/" element={<Main />} />
+
+            {/* Dashboard */}
+            <Route path="/dashboard" element={<Dashboard />} />
             
             {/* Route pour afficher une roadmap spécifique */}
             <Route path="/roadmap/:slug" element={<Main />} />

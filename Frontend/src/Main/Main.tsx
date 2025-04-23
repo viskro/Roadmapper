@@ -14,9 +14,10 @@
  * en fonction du slug dans l'URL ou des props passées au composant.
  */
 
-import { AddButton } from "./components/AddButton";
+import { AddButton } from "./components/Items/AddButton";
+import { DeleteRoadmapButton } from "./components/Roadmap/DeleteRoadmapButton";
 import { Header } from "./components/Header";
-import { ItemCard } from "./components/ItemCard";
+import { ItemCard } from "./components/Items/ItemCard";
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
@@ -213,10 +214,13 @@ export default function Main({ roadmapSlug: propSlug }: MainProps = {}) {
             
             {/* Bouton d'ajout d'item (affiché uniquement si une roadmap est sélectionnée) */}
             {currentRoadmap && (
-                <AddButton 
-                    onItemAdded={() => currentRoadmap && fetchRoadmapItems(currentRoadmap.id)} 
-                    roadmapId={currentRoadmap.id}
-                />
+                <div className="flex gap-4 items-center">
+                    <AddButton 
+                        onItemAdded={() => currentRoadmap && fetchRoadmapItems(currentRoadmap.id)} 
+                        roadmapId={currentRoadmap.id}
+                    />
+                    <DeleteRoadmapButton id={currentRoadmap.id} />
+                </div>
             )}
             
             {/* Affichage des messages d'erreur */}

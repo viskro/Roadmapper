@@ -17,14 +17,17 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus, LogOut } from "lucide-react";
+import { Plus, LogOut, LayoutGrid } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import * as React from "react";
 import { 
     Sidebar, 
     SidebarContent, 
     SidebarFooter, 
-    SidebarHeader 
+    SidebarHeader, 
+    SidebarMenu,
+    SidebarMenuSub,
+    SidebarMenuSubButton
 } from "@/components/ui/sidebar";
 import { SearchForm } from "./search-form";
 import { Item, Category } from "./category";
@@ -193,7 +196,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <Sidebar className="flex flex-col justify-between z-50 select-none" {...props}>
             {/* En-tête de la barre latérale avec logo et recherche */}
             <SidebarHeader className="p-4">
-                <Link to="/" className="mr-auto">
+                <Link to="/dashboard" className="mr-auto">
                     <h1 className="text-3xl text-foreground font-bold">Roadmapper</h1>
                 </Link>
                 <SearchForm onChange={(e) => setSearchQuery(e.target.value)} />
@@ -213,6 +216,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <span className="sr-only">Ajouter une roadmap</span>
                     </Button>
                 </div>
+                    <SidebarMenu>
+                        <SidebarMenuSub>
+                            <SidebarMenuSubButton asChild>
+                                <Button variant={"ghost"} onClick={handleNavigate("/dashboard")} className="hover:cursor-pointer">
+                                    <LayoutGrid className="w-[30px] h-[30px]"/>
+                                    <h2 className="text-[16px] text-foreground">Dashboard</h2>
+                                </Button>
+                            </SidebarMenuSubButton>
+                        </SidebarMenuSub>
+                    </SidebarMenu>
+
 
                 {/* Indicateurs d'état (chargement, erreur, vide) */}
                 {loading && <p className="text-sm text-muted-foreground">Chargement...</p>}

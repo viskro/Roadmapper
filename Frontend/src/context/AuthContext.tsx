@@ -31,9 +31,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [user, setUser] = useState<User | null>(null);
     const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
-    
-    // Nous supprimons la variable sessionId qui n'est pas réellement utilisée pour la logique d'authentification
-    // Elle est seulement utilisée pour les logs, ce qui peut être fait directement
 
     // Vérifie si l'utilisateur est connecté au chargement de l'application
     const checkAuth = async () => {

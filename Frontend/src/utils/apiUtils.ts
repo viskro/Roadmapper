@@ -33,7 +33,8 @@ export const API_ENDPOINTS = {
     // Roadmaps
     GET_USER_ROADMAPS: `${API_BASE_URL}/getUserRoadmaps.php`,
     GET_ROADMAP_ITEMS: `${API_BASE_URL}/getRoadmapItems.php`,
-    ADD_ROADMAP: `${API_BASE_URL}/addRoadmap.php`
+    ADD_ROADMAP: `${API_BASE_URL}/addRoadmap.php`,
+    DELETE_ROADMAP: `${API_BASE_URL}/deleteRoadmap.php`
 };
 
 // Options de base pour fetch avec credentials
