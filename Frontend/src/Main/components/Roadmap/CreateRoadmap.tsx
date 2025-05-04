@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +16,6 @@ export function CreateRoadmap() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     
-    const navigate = useNavigate();
 
     const categories = [
         "Langages", 
@@ -52,7 +50,7 @@ export function CreateRoadmap() {
             if (handleApiError(result, setError, "créer la roadmap")) {
                 setSuccess("Roadmap créée avec succès !");
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                navigate(`/roadmap/${result.data?.slug}`);
+                window.location.reload();
             }
 
         } catch (error) {

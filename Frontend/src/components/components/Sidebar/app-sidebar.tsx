@@ -17,22 +17,27 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus, LogOut, LayoutGrid } from "lucide-react";
+import { Plus, LogOut, LayoutGrid, ChevronUp, ChevronDown } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import * as React from "react";
 import { 
     Sidebar, 
     SidebarContent, 
     SidebarFooter, 
+    SidebarGroup, 
+    SidebarGroupLabel, 
     SidebarHeader, 
     SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
     SidebarMenuSub,
-    SidebarMenuSubButton
+    SidebarMenuSubButton,
+    SidebarMenuSubItem
 } from "@/components/ui/sidebar";
 import { SearchForm } from "./search-form";
-import { Item, Category } from "./category";
 import { fetchUserRoadmapsApi } from "@/utils/itemUtils";
 import { handleApiError, handleError } from "@/utils/errorUtils";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 /**
  * Interface définissant la structure d'une roadmap
@@ -191,12 +196,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         navigate("/create-roadmap");
     };
 
+    const [open, setOpen] = React.useState(false);
+
     // Rendu du composant
     return (
         <Sidebar className="flex flex-col justify-between z-50 select-none" {...props}>
             {/* En-tête de la barre latérale avec logo et recherche */}
             <SidebarHeader className="p-4">
-                <Link to="/dashboard" className="mr-auto">
+                <Link to="/dashboard" className="mx-auto">
                     <h1 className="text-3xl text-foreground font-bold">Roadmapper</h1>
                 </Link>
                 <SearchForm onChange={(e) => setSearchQuery(e.target.value)} />
@@ -245,28 +252,40 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </p>
                 )}
 
-                {/* Liste des roadmaps organisées par catégories */}
-                <div className="flex flex-col gap-2 mt-2">
-                    {Object.entries(filteredRoadmaps).map(([category, roadmaps]) => (
-                        <Category
-                            key={category}
-                            title={category}
-                            isOpen={true}
-                        >
-                            {roadmaps.map((roadmap) => (
-                                <Item
-                                    key={roadmap.id}
-                                    title={roadmap.name}
-                                    href={`/roadmap/${roadmap.slug}`}
-                                    onClick={handleNavigate(`/roadmap/${roadmap.slug}`)}
-                                    badge={roadmap.item_count.toString()}
-                                />
-                            ))}
-                        </Category>
-                    ))}
-                </div>
+
+
+                <SidebarGroup>
+                    <SidebarGroupLabel>Roadmaps</SidebarGroupLabel>
+                    <SidebarMenu>
+                        {Object.entries(filteredRoadmaps).map(([category, roadmaps]) => (
+                            <Collapsible open={open} onOpenChange={setOpen} key={category} className="group/collapsible">
+                                <SidebarMenuItem>
+                                    <CollapsibleTrigger asChild>
+                                        <SidebarMenuButton className="flex justify-between hover:cursor-pointer">
+                                            <span>{category}</span>
+                                            {open ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                        </SidebarMenuButton>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent>
+                                        <SidebarMenuSub>
+                                            {roadmaps.map((roadmap) => (
+                                                <SidebarMenuSubItem key={roadmap.name}>
+                                                    <SidebarMenuButton asChild>
+                                                        <a href="" onClick={handleNavigate(`/roadmap/${roadmap.slug}`)} className="flex items-center justify-between w-full">
+                                                            <span>{roadmap.name}</span>
+                                                        </a>
+                                                    </SidebarMenuButton>
+                                                </SidebarMenuSubItem>
+                                            ))}
+                                        </SidebarMenuSub>
+                                    </CollapsibleContent>
+                                </SidebarMenuItem>
+                            </Collapsible>
+                        ))}
+                    </SidebarMenu>
+                </SidebarGroup>
             </SidebarContent>
-            
+             
             {/* Pied de page avec bouton de déconnexion (visible uniquement si connecté) */}
             {isAuthenticated && (
                 <SidebarFooter className="p-4">

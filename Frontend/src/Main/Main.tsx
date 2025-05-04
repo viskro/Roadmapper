@@ -33,6 +33,7 @@ import {
     updateItemOrderApi
 } from "@/utils/itemUtils";
 import { handleError, handleApiError } from "@/utils/errorUtils";
+import { MoveDown } from "lucide-react";
 
 /**
  * Interface définissant les propriétés du composant Main
@@ -210,7 +211,7 @@ export default function Main({ roadmapSlug: propSlug }: MainProps = {}) {
     return (
         <main className="flex flex-col gap-4 p-4 w-full">
             {/* En-tête avec le titre de la roadmap ou "Tableau de bord" */}
-            <Header title={currentRoadmap?.name || "Tableau de bord"} />
+            <Header title={currentRoadmap?.name + " 's Roadmap" || "Tableau de bord"} />
             
             {/* Bouton d'ajout d'item (affiché uniquement si une roadmap est sélectionnée) */}
             {currentRoadmap && (
@@ -251,16 +252,18 @@ export default function Main({ roadmapSlug: propSlug }: MainProps = {}) {
                     <p className="text-center py-4">Aucun item à afficher dans cette roadmap</p>
                 ) : (
                     items.map((item, index) => (
-                        <ItemCard
-                            key={item.id}
-                            id={item.id}
-                            title={item.title}
-                            description={item.description}
-                            date={item.created_at}
-                            updateOrder={updateItemOrder}
-                            isFirst={index === 0}
-                            isLast={index === items.length - 1}
-                        />
+                        <div className="flex flex-col justify-center items-center" key={item.id}>
+                            <ItemCard
+                                id={item.id}
+                                title={item.title}
+                                description={item.description}
+                                date={item.created_at}
+                                updateOrder={updateItemOrder}
+                                isFirst={index === 0}
+                                isLast={index === items.length - 1}
+                            />
+                            {index !== items.length - 1 && <MoveDown className="mt-4" />}
+                        </div>
                     ))
                 )}
             </div>

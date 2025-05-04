@@ -99,8 +99,8 @@ export function Login() {
                         >
                             {loading ? "Connexion en cours..." : "Se connecter"}
                         </Button>
-                        <span className="text-sm text-accent">
-                            Vous n'avez pas de compte ? <Link to={"/register"} className="text-accent-foreground">S'inscrire</Link>
+                        <span className="text-sm text-secondary-foreground">
+                            Vous n'avez pas de compte ? <Link to={"/register"} className="text-secondary-foreground underline">S'inscrire</Link>
                         </span>
                     </div>
                 </form>

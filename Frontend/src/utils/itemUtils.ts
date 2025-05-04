@@ -47,8 +47,7 @@ export interface Roadmap {
  * Formatte un item pour l'affichage
  * 
  * Cette fonction prend un objet Item et retourne une version modifiée avec
- * sa date de création formatée pour une meilleure lisibilité. Elle utilise
- * l'API Intl.DateTimeFormat pour obtenir une date localisée en français.
+ * sa date de création formatée pour une meilleure lisibilité.
  * 
  * @param item L'item à formatter
  * @returns Une copie de l'item avec la date correctement formatée

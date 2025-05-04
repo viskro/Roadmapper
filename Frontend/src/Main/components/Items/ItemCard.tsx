@@ -97,8 +97,8 @@ export function ItemCard({ id, title, description, date, updateOrder, isFirst = 
         <div className="w-full">
             <Card key={id} className="w-full bg-secondary text-secondary-foreground">
                 {/* En-tête de la carte avec le titre */}
-                <CardHeader className="flex items-center justify-between">
-                    <h1 className="text-xl">{title}</h1>
+                <CardHeader>
+                    <h1 className="text-2xl">{title}</h1>
                 </CardHeader>
                 
                 {/* Contenu principal avec description et contrôles */}

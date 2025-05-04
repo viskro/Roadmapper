@@ -9,12 +9,12 @@ export interface RoadmapCardProps {
 
 export default function RoadmapCard({ name, description, onClick }: RoadmapCardProps) {
     return (
-        <Card onClick={onClick} className="cursor-pointer hover:shadow-md transition-shadow">
+        <Card onClick={onClick} className="cursor-pointer hover:shadow-md transition-shadow bg-secondary">
             <CardHeader>
-                <CardTitle>{name}</CardTitle>
+                <CardTitle className="text-xl">{name}</CardTitle>
             </CardHeader>
             <CardContent>
-                <p>{description}</p>
+                <p className="text-muted-foreground">{description}</p>
             </CardContent>
         </Card>
     );

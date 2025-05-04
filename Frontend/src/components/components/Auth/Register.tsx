@@ -110,7 +110,7 @@ export function Register() {
                         <Button type="submit" className="hover:cursor-pointer" disabled={loading}>
                             {loading ? "Inscription..." : "S'inscrire"}
                         </Button>
-                        <span className="text-sm text-accent">Vous avez déjà un ? <Link to={"/login"} className="text-accent-foreground">Se connecter</Link></span>
+                        <span className="text-sm text-secondary-foreground">Vous avez déjà un ? <Link to={"/login"} className="text-secondary-foreground underline">Se connecter</Link></span>
                     </div>
                 </form>
             </CardContent>
