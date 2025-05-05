@@ -71,8 +71,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         checkAuth();
         // Vérifier l'authentification toutes les 5 minutes pour maintenir la session active
-        const intervalId = setInterval(checkAuth, 5 * 60 * 1000);
-        return () => clearInterval(intervalId);
+        // const intervalId = setInterval(checkAuth, 5 * 60 * 1000);
+        // return () => clearInterval(intervalId);
     }, []);
 
     const login = async (email: string, password: string): Promise<AuthResponse> => {

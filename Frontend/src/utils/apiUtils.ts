@@ -13,7 +13,7 @@
  */
 
 // Configuration de base de l'API
-const API_BASE_URL = "http://localhost:80/projetWKS/Backend/api";
+const API_BASE_URL = "http://localhost:81/Roadmapper/Backend/api";
 
 // Points d'entrée de l'API
 export const API_ENDPOINTS = {
@@ -29,6 +29,8 @@ export const API_ENDPOINTS = {
     UPDATE_ITEM: `${API_BASE_URL}/updateItem.php`,
     DELETE_ITEM: `${API_BASE_URL}/deleteItem.php`,
     UPDATE_ITEM_ORDER: `${API_BASE_URL}/updateItemOrder.php`,
+    IS_FINISHED: `${API_BASE_URL}/isFinished.php`,
+    SET_IS_FINISHED: `${API_BASE_URL}/setIsFinished.php`,
     
     // Roadmaps
     GET_USER_ROADMAPS: `${API_BASE_URL}/getUserRoadmaps.php`,
@@ -188,39 +190,32 @@ export async function apiDelete<T = Record<string, unknown>>(
 /**
  * Effectue un appel API PUT générique avec des données JSON
  * 
- * Conforme aux principes RESTful, cette fonction place l'identifiant dans l'URL
- * plutôt que dans le corps de la requête pour les opérations de mise à jour.
- * 
  * @template T Type des données attendues dans la réponse
- * @param url L'URL de base de l'API (sans l'ID)
- * @param data Les données à envoyer, dont un champ 'id' qui sera extrait et ajouté à l'URL
+ * @param url L'URL de l'API à appeler
+ * @param data Les données à envoyer
  * @returns Promesse contenant la réponse API typée
  */
 export async function apiPut<T = Record<string, unknown>>(
     url: string, 
     data: Record<string, unknown>
 ): Promise<ApiResponse<T>> {
-     try {
-        // Extraire l'ID des données pour l'ajouter à l'URL
+    try {
         const id = data.id;
         if (!id) {
             throw new Error("L'identifiant 'id' est requis pour une requête PUT");
         }
-          
-        // Construire l'URL complète avec l'ID
+
         const fullUrl = `${url}/${id}`;
-         
         const response = await fetch(fullUrl, {
             ...BASE_FETCH_OPTIONS,
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
+            }
         });
         
         return await response.json();
-     } catch (error) {
+    } catch (error) {
         console.error(`Erreur lors de l'appel PUT à ${url}:`, error);
         return {
             success: false,

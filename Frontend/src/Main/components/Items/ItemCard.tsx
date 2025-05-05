@@ -16,6 +16,9 @@ import { Card, CardContent, CardFooter, CardHeader } from "../../../components/u
 import { ChevronDown, ChevronUp } from "lucide-react";
 import DeleteButton from "./DeleteButton"
 import { UpdateButton } from "./UpdateButton";
+import IsFinished from "./isFinished";
+import { useState } from "react";
+
 
 /**
  * Interface définissant les propriétés du composant ItemCard
@@ -24,18 +27,22 @@ import { UpdateButton } from "./UpdateButton";
  * @property title - Titre de l'item
  * @property description - Description détaillée de l'item
  * @property date - Date de création formatée pour l'affichage
+ * @property isFinished - Indique si l'item est terminé
  * @property updateOrder - Fonction pour modifier l'ordre de l'item
  * @property isFirst - Indique si l'item est le premier de la liste (désactive le bouton "monter")
  * @property isLast - Indique si l'item est le dernier de la liste (désactive le bouton "descendre")
+ * @property onItemModified - Fonction appelée lorsque l'item est modifié
  */
 interface ItemCardProps { 
     id: number; 
     title: string; 
     description: string; 
     date: string; 
+    isFinished: boolean;
     updateOrder: (id: number, direction: "up" | "down") => void;
     isFirst?: boolean;
     isLast?: boolean;
+    onItemModified?: () => void;
 }
 
 /**
@@ -80,6 +87,7 @@ const DirectionButton = ({ direction, id, isDisabled, updateOrder }: DirectionBu
     );
 };
 
+
 /**
  * Composant ItemCard - Carte affichant un item avec ses contrôles
  * 
@@ -92,13 +100,32 @@ const DirectionButton = ({ direction, id, isDisabled, updateOrder }: DirectionBu
  * 
  * @param props - Les propriétés du composant
  */
-export function ItemCard({ id, title, description, date, updateOrder, isFirst = false, isLast = false }: ItemCardProps) {
+export function ItemCard({ 
+    id, 
+    title, 
+    description, 
+    date, 
+    isFinished,
+    updateOrder, 
+    isFirst = false, 
+    isLast = false,
+    onItemModified 
+}: ItemCardProps) {
+
+    const [isFinishedState, setIsFinishedState] = useState(isFinished);
     return (
         <div className="w-full">
-            <Card key={id} className="w-full bg-secondary text-secondary-foreground">
+            <Card key={id} className={`w-full ${isFinishedState ? 'bg-green-100' : 'bg-secondary'} text-secondary-foreground`}>
                 {/* En-tête de la carte avec le titre */}
                 <CardHeader>
-                    <h1 className="text-2xl">{title}</h1>
+                    <div className="flex justify-between items-center">
+                        <h1 className="text-2xl">{title}</h1>
+                        <IsFinished 
+                            id={id} 
+                            initialIsFinished={isFinished}
+                            onItemModified={onItemModified}
+                        />
+                    </div>
                 </CardHeader>
                 
                 {/* Contenu principal avec description et contrôles */}

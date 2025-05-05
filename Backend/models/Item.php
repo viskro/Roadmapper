@@ -159,6 +159,40 @@ class Item {
         // Retourne true si au moins une ligne a été supprimée
         return $stmt->rowCount() > 0;
     }
+
+    /**
+     * Marque un item comme terminé ou non terminé
+     * 
+     * @param int $id ID de l'item à modifier
+     * @param bool $isFinished Nouvel état de l'item
+     * @return array Tableau associatif avec le statut de l'opération
+     */
+    public function setIsFinished($id) {
+        $stmt = $this->db->prepare("UPDATE items SET isFinished = NOT isFinished WHERE id = :id AND user_id = :user_id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $this->user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->rowCount() > 0;
+    }
+
+    /**
+     * Vérifie si un item est terminé
+     * 
+     * Cette méthode récupère l'état de l'item (terminé ou non) en consultant
+     * le champ isFinished dans la base de données.
+     * 
+     * @param int $id ID de l'item à vérifier
+     * @return bool true si l'item est terminé, false sinon
+     */
+    public function isFinished($id) {
+        $stmt = $this->db->prepare("SELECT isFinished FROM items WHERE id = :id AND user_id = :user_id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $this->user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchColumn();
+    }
     
     /**
      * Met à jour l'ordre d'affichage d'un item
@@ -246,4 +280,6 @@ class Item {
         
         return $stmt->execute();
     }
-} 
+
+    
+}
