@@ -7,30 +7,72 @@ import { handleError, handleApiError } from "@/utils/errorUtils";
 interface IsFinishedProps {
     id: number;
     initialIsFinished: boolean;
-    onItemModified?: () => void;
+    onItemModified?: (newFinishedState: boolean) => void;
+}
+
+// Interface pour les données retournées par l'API setIsFinished
+interface SetIsFinishedResponse {
+    isFinished: boolean;
 }
 
 export default function IsFinished({ id, initialIsFinished, onItemModified }: IsFinishedProps) {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [isFinished, setIsFinished] = useState<boolean>(initialIsFinished);
+    
+    if (error) {
+        console.log(error);
+    }
 
     const handleToggleFinished = async () => {
         setLoading(true);
         setError(null);
-        console.log(error);
+        
+        // Sauvegarde de l'état actuel avant l'appel API
+        const currentState = isFinished;
+        // Optimistic UI update - Mettre à jour l'UI immédiatement
+        const expectedNewState = !currentState;
+        setIsFinished(expectedNewState);
+        
         try {
-            const result = await apiPut(API_ENDPOINTS.SET_IS_FINISHED, {id} as Record<string, unknown>);
+            // Ajout de log pour vérifier l'état actuel
+            console.log("État actuel avant appel API:", currentState);
+            
+            const result = await apiPut<SetIsFinishedResponse>(
+                API_ENDPOINTS.SET_IS_FINISHED, 
+                {id, currentState} as Record<string, unknown>
+            );
 
-            if (result.success) {
-                setIsFinished(result.data.isFinished);
+            console.log("Réponse API complète:", result);
+            
+            if (result.success && result.data) {
+                const newFinishedState = result.data.isFinished;
+                console.log("Nouvel état reçu de l'API:", newFinishedState);
+                
+                // Vérifier si l'état reçu correspond à l'état attendu
+                if (newFinishedState !== expectedNewState) {
+                    console.warn("L'état reçu de l'API ne correspond pas à l'état attendu!");
+                }
+
+                // Mettre à jour l'état local avec la réponse de l'API
+                setIsFinished(newFinishedState);
                 if (onItemModified) {
-                    onItemModified();
+                    onItemModified(newFinishedState);
                 }
             } else {
+                console.log("Échec de l'appel API:", result.message);
+                // En cas d'échec, on maintient l'état mis à jour localement
+                if (onItemModified) {
+                    onItemModified(expectedNewState);
+                }
                 handleApiError(result, setError, "modification du statut");
             }
         } catch (error) {
+            console.error("Erreur lors de l'appel API:", error);
+            // En cas d'erreur, on maintient l'état mis à jour localement
+            if (onItemModified) {
+                onItemModified(expectedNewState);
+            }
             handleError(error, setError, "la modification du statut");
         } finally {
             setLoading(false);

@@ -27,6 +27,7 @@ export interface Item {
     created_at: string;        // Date de création au format ISO ou format lisible
     item_order?: number;       // Position dans la liste des items (optionnel)
     roadmap_id: number;        // ID de la roadmap à laquelle appartient l'item
+    isFinished: boolean;      // Indique si l'item est terminé (optionnel)
 }
 
 /**

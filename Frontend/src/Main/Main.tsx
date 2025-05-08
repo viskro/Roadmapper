@@ -261,6 +261,7 @@ export default function Main({ roadmapSlug: propSlug }: MainProps = {}) {
                                 updateOrder={updateItemOrder}
                                 isFirst={index === 0}
                                 isLast={index === items.length - 1}
+                                isFinished={item.isFinished}
                             />
                             {index !== items.length - 1 && <MoveDown className="mt-4" />}
                         </div>

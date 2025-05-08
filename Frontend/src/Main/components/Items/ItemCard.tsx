@@ -111,19 +111,28 @@ export function ItemCard({
     isLast = false,
     onItemModified 
 }: ItemCardProps) {
+    // État local pour suivre le statut terminé/non terminé
+    const [itemFinished, setItemFinished] = useState<boolean>(isFinished);
 
-    const [isFinishedState, setIsFinishedState] = useState(isFinished);
+    // Fonction de rappel pour mettre à jour l'état local
+    const handleItemStatusChange = (newFinishedState: boolean) => {
+        setItemFinished(newFinishedState);
+        if (onItemModified) {
+            onItemModified();
+        }
+    }
+
     return (
         <div className="w-full">
-            <Card key={id} className={`w-full ${isFinishedState ? 'bg-green-100' : 'bg-secondary'} text-secondary-foreground`}>
+            <Card key={id} className={`w-full ${itemFinished ? 'bg-sidebar-ring text-sidebar-foreground' : 'bg-secondary text-secondary-foreground'}`}>
                 {/* En-tête de la carte avec le titre */}
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <h1 className="text-2xl">{title}</h1>
                         <IsFinished 
                             id={id} 
-                            initialIsFinished={isFinished}
-                            onItemModified={onItemModified}
+                            initialIsFinished={itemFinished}
+                            onItemModified={handleItemStatusChange}
                         />
                     </div>
                 </CardHeader>

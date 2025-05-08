@@ -70,7 +70,7 @@ try {
     
     if ($result) {
         // Si la modification a réussi, envoyer une réponse de succès
-        sendJsonResponse(true, "Item modifié avec succès", ["id" => $id]);
+        sendJsonResponse(true, "Item modifié avec succès", ['item' => $result], 200);
     } else {
         // Si la modification a échoué pour une raison inconnue
         sendJsonResponse(false, "Échec de la modification de l'item pour une raison inconnue", [], 500);

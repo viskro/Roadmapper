@@ -13,7 +13,7 @@
  */
 
 // Configuration de base de l'API
-const API_BASE_URL = "http://localhost:81/Roadmapper/Backend/api";
+const API_BASE_URL = "http://localhost:80/projetWKS/Backend/api";
 
 // Points d'entrée de l'API
 export const API_ENDPOINTS = {
@@ -211,7 +211,8 @@ export async function apiPut<T = Record<string, unknown>>(
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            body: JSON.stringify(data)
         });
         
         return await response.json();

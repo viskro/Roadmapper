@@ -172,8 +172,13 @@ class Item {
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':user_id', $this->user_id, PDO::PARAM_INT);
         $stmt->execute();
+
+        $stmt = $this->db->prepare("SELECT isFinished FROM items WHERE id = :id AND user_id = :user_id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $this->user_id, PDO::PARAM_INT);
+        $stmt->execute();
         
-        return $stmt->rowCount() > 0;
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
