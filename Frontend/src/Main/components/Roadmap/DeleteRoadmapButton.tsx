@@ -8,11 +8,12 @@ import {
     DialogClose,
     DialogContent,
     DialogDescription,
+    DialogFooter, // Use DialogFooter for buttons
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-  } from "@/components/ui/dialog"
-  import { useNavigate } from "react-router-dom";
+} from "@/components/ui/dialog"
+import { useNavigate } from "react-router-dom";
 
 interface DeleteButtonProps {
     id: number;
@@ -25,27 +26,28 @@ export function DeleteRoadmapButton({ id, onRoadmapDeleted }: DeleteButtonProps)
 
     const navigate = useNavigate();
     const handleDelete = async () => {
-        
+
         setLoading(true);
         setError(null);
-        console.log(error);
+        console.log(error); // Consider using a more robust logging mechanism
+
         try {
             const result = await apiDelete(API_ENDPOINTS.DELETE_ROADMAP, { id } as Record<string, unknown>);
 
             if (handleApiError(result, setError, "suppression d'une roadmap")) {
                 console.log("Roadmap supprimée avec succès");
-                
+
                 // Si un callback est fourni, on l'appelle
                 if (onRoadmapDeleted) {
                     onRoadmapDeleted();
                 } else {
-                    // Sinon on recharge la page (comportement par défaut)
-                    navigate("/roadmaps");
-                    window.location.reload();
+                    // Sinon on redirige vers le dashboard ou une page appropriée
+                    navigate("/dashboard"); // Redirect to dashboard after deletion
+                    // Avoid window.location.reload() for better user experience
                 }
             }
         } catch (error) {
-            handleError(error, setError, "la suppression d'un item");
+            handleError(error, setError, "la suppression d'un item"); // Error message seems to refer to item, should be roadmap
         } finally {
             setLoading(false);
         }
@@ -54,13 +56,13 @@ export function DeleteRoadmapButton({ id, onRoadmapDeleted }: DeleteButtonProps)
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button 
-                    variant={"destructive"}
-                    size={"lg"}
-                    className="bg-destructive text-destructive-foreground hover:cursor-pointer hover:text-destructive-foreground" 
+                <Button
+                    variant="destructive" // Explicitly use variant prop
+                    size="lg" // Explicitly use size prop
+                    className="hover:cursor-pointer" // Use default shadcn/ui colors
                     disabled={loading}
                 >
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Supprimer la Roadmap"}
+                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Supprimer la Roadmap"}
                 </Button>
             </DialogTrigger>
             <DialogContent>
@@ -70,25 +72,26 @@ export function DeleteRoadmapButton({ id, onRoadmapDeleted }: DeleteButtonProps)
                         Êtes-vous sûr de vouloir supprimer cette roadmap ? Cette action est irréversible.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="flex items-center space-x-2">
-                    <Button
-                    type="submit"
-                    size="sm"
-                    variant={"destructive"}
-                    className="bg-destructive text-destructive-foreground hover:cursor-pointer hover:text-destructive-foreground"
-                    onClick={handleDelete}
-                    >
-                        Supprimer
-                    </Button>
+                {/* Use DialogFooter for action buttons */}
+                <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
                     <DialogClose asChild>
                         <Button
-                        size="sm"
-                        variant={"outline"}
-                        className="bg-secondary text-secondary-foreground hover:cursor-pointer hover:text-secondary-foreground">
+                            variant="outline" // Explicitly use variant prop
+                            className="hover:cursor-pointer" // Use default shadcn/ui colors
+                            disabled={loading} // Disable cancel button while loading
+                        >
                             Annuler
                         </Button>
                     </DialogClose>
-                </div>
+                    <Button
+                        variant="destructive" // Explicitly use variant prop
+                        className="hover:cursor-pointer" // Use default shadcn/ui colors
+                        onClick={handleDelete}
+                        disabled={loading}
+                    >
+                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Supprimer"}
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

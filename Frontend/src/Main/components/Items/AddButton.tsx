@@ -6,6 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { API_ENDPOINTS, apiPost } from "@/utils/apiUtils";
 import { handleError, handleApiError } from "@/utils/errorUtils";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Import Alert components
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons"; // Optional: Add an icon for the alert
+import { Loader2, Plus } from "lucide-react"; // Add Plus icon for the button
 
 interface AddButtonProps {
     onItemAdded?: () => void;
@@ -37,10 +40,10 @@ export function AddButton({ onItemAdded, roadmapId }: AddButtonProps) {
         }
 
         try {
-            const result = await apiPost(API_ENDPOINTS.ADD_ITEM, { 
-                title, 
+            const result = await apiPost(API_ENDPOINTS.ADD_ITEM, {
+                title,
                 description,
-                roadmap_id: roadmapId 
+                roadmap_id: roadmapId
             } as Record<string, unknown>);
 
             if (handleApiError(result, setError, "ajout d'un item")) {
@@ -48,7 +51,7 @@ export function AddButton({ onItemAdded, roadmapId }: AddButtonProps) {
                 setTitle("");
                 setDescription("");
                 setOpen(false);
-                
+
                 // Appel du callback pour mettre à jour les données dans le composant parent
                 if (onItemAdded) {
                     onItemAdded();
@@ -64,43 +67,59 @@ export function AddButton({ onItemAdded, roadmapId }: AddButtonProps) {
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant={"default"} size={"lg"} className="w-40 bg-primary text-primary-foreground hover:cursor-pointer">
+                <Button
+                    variant="default"
+                    size="lg"
+                    className="w-40 hover:cursor-pointer" // Use default shadcn/ui colors
+                    disabled={loading}
+                >
+                     {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
                     Ajouter une étape
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-72 ml-32 bg-background text-foreground">
+            <PopoverContent className="w-72 ml-32"> {/* Use default shadcn/ui colors */}
                 {error && (
-                    <div className="p-3 mb-3 text-sm text-red-800 bg-red-100 rounded-lg">
-                        {error}
-                    </div>
+                    <Alert variant="destructive" className="mb-4"> {/* Use Alert for errors */}
+                        <ExclamationTriangleIcon className="h-4 w-4" />
+                        <AlertTitle>Erreur</AlertTitle>
+                        <AlertDescription>
+                            {error}
+                        </AlertDescription>
+                    </Alert>
                 )}
-                <form method="POST" onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <Label htmlFor="title" className="text-foreground">Nom de l'étape</Label>
-                    <Input 
-                        type="text" 
-                        name="title" 
-                        value={title}
-                        onChange={(e) => {setTitle(e.target.value)}}
-                        disabled={loading}
-                        required
-                    />
+                <form method="POST" onSubmit={handleSubmit} className="grid gap-4"> {/* Use grid for better form layout */}
+                    <div className="grid gap-2">
+                        <Label htmlFor="title">Nom de l'étape</Label>
+                        <Input
+                            id="title"
+                            type="text"
+                            name="title"
+                            value={title}
+                            onChange={(e) => { setTitle(e.target.value) }}
+                            disabled={loading}
+                            required
+                        />
+                    </div>
 
-                    <Label htmlFor="description" className="text-foreground">Description de l'étape</Label>
-                    <Textarea 
-                        name="description" 
-                        className="resize-none" 
-                        rows={4} 
-                        value={description}
-                        onChange={(e) => {setDescription(e.target.value)}}
-                        disabled={loading}
-                    />
+                    <div className="grid gap-2">
+                        <Label htmlFor="description">Description de l'étape</Label>
+                        <Textarea
+                            id="description"
+                            name="description"
+                            className="resize-none"
+                            rows={4}
+                            value={description}
+                            onChange={(e) => { setDescription(e.target.value) }}
+                            disabled={loading}
+                        />
+                    </div>
 
-                    <Button 
-                        type="submit" 
+                    <Button
+                        type="submit"
                         className="hover:cursor-pointer"
                         disabled={loading}
                     >
-                        {loading ? "Ajout en cours..." : "Ajouter"}
+                        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Ajouter"}
                     </Button>
                 </form>
             </PopoverContent>

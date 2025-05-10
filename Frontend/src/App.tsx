@@ -32,10 +32,13 @@ const ProtectedRoute = () => {
 };
 
 function App() {
+  const { isAuthenticated } = useAuth();
   return (
     <Router>
       <SidebarProvider>
+        {isAuthenticated && (
         <AppSidebar />
+        )}
         <Routes>
           {/* Routes protégées */}
           <Route element={<ProtectedRoute />}>

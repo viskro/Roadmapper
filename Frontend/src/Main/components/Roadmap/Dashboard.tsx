@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { API_ENDPOINTS, apiGet } from "@/utils/apiUtils";
 import { handleError, handleApiError } from "@/utils/errorUtils";
-import { Loader2 } from "lucide-react";
+import { Loader2, PlusCircle } from "lucide-react"; // Import PlusCircle icon
 import RoadmapCard from "./RoadmapCard";
 import { useNavigate } from "react-router-dom";
-
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button"; // Import Button
 
 export default function Dashboard() {
 
@@ -16,7 +19,6 @@ export default function Dashboard() {
         slug: string;
     }
 
-    // Interface pour typer la réponse de l'API
     interface RoadmapsApiResponse {
         roadmaps: Roadmap[];
         categorized: Record<string, Roadmap[]>;
@@ -26,7 +28,7 @@ export default function Dashboard() {
     const [error, setError] = useState<string | null>(null);
     const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
 
-    
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchRoadmaps = async () => {
@@ -34,17 +36,22 @@ export default function Dashboard() {
             setError(null);
             try {
                 const result = await apiGet<RoadmapsApiResponse>(API_ENDPOINTS.GET_USER_ROADMAPS);
-    
+
                 if (handleApiError(result, setError, "récupération des roadmaps")) {
-                    // Vérification que result.data et result.data.roadmaps existent
                     if (result.data && Array.isArray(result.data.roadmaps)) {
                         setRoadmaps(result.data.roadmaps);
                     } else {
-                        setError("Format de données invalide reçu du serveur");
+                        // Handle case where data is valid but roadmaps array is missing or not an array
+                        setRoadmaps([]);
                     }
+                } else {
+                     // If handleApiError returns false, it means there was an API error
+                     // The error state is already set by handleApiError
+                     setRoadmaps([]); // Clear roadmaps on API error
                 }
             } catch (error) {
                 handleError(error, setError, "la récupération des roadmaps");
+                setRoadmaps([]); // Clear roadmaps on general error
             } finally {
                 setLoading(false);
             }
@@ -52,34 +59,77 @@ export default function Dashboard() {
 
         fetchRoadmaps();
 
-    }, [setRoadmaps, setLoading, setError]);
+    }, []);
 
-    const navigate = useNavigate();
-
-    // Fonction pour gérer la navigation vers une roadmap
     const handleNavigateToRoadmap = (slug: string) => {
         return () => {
             navigate(`/roadmap/${slug}`);
         };
     };
 
+    const handleCreateRoadmap = () => {
+        navigate("/create-roadmap");
+    };
+
     return (
-        <div className="p-4 w-full">
-            <h1 className="text-3xl font-bold text-center mb-10 mt-10">Dashboard</h1>
-            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {error && <p className="text-red-500">{error}</p>}
-            {roadmaps.length === 0 && !loading && <p>Aucune roadmap trouvée.</p>}
-            <div className="grid grid-cols-4 gap-4">
-                {roadmaps.map((roadmap) => (
-                    <RoadmapCard 
-                        key={roadmap.id}
-                        name={roadmap.name} 
-                        description={roadmap.description} 
-                        slug={roadmap.slug}
-                        onClick={handleNavigateToRoadmap(roadmap.slug)}
-                    />
-                ))}
+        <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8"> {/* Use container for max-width and center, add responsive padding */}
+            <div className="flex justify-between items-center mb-8"> {/* Flex container for title and button */}
+                 <h1 className="text-3xl font-bold">Dashboard</h1>
+                 <Button onClick={handleCreateRoadmap} className="flex items-center hover:cursor-pointer">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Créer une roadmap
+                 </Button>
             </div>
+
+
+            {/* Loading state */}
+            {loading && (
+                <div className="flex flex-col items-center justify-center py-16"> {/* Increased padding */}
+                    <Loader2 className="h-10 w-10 animate-spin text-primary" /> {/* Larger icon, primary color */}
+                    <p className="mt-4 text-lg text-muted-foreground">Chargement des roadmaps...</p> {/* Larger text */}
+                </div>
+            )}
+
+            {/* Error state */}
+            {error && (
+                <Alert variant="destructive" className="mb-8"> {/* Increased bottom margin */}
+                    <ExclamationTriangleIcon className="h-5 w-5" /> {/* Larger icon */}
+                    <AlertTitle>Erreur de chargement</AlertTitle> {/* More specific title */}
+                    <AlertDescription>
+                        {error}
+                    </AlertDescription>
+                </Alert>
+            )}
+
+            {/* Empty state */}
+            {!loading && !error && roadmaps.length === 0 && (
+                 <Card className="w-full text-center py-16"> {/* Increased vertical padding */}
+                    <CardContent className="flex flex-col items-center justify-center"> {/* Center content */}
+                        <p className="text-xl font-semibold text-muted-foreground mb-6"> {/* Larger and bolder text */}
+                            Aucune roadmap trouvée.
+                        </p>
+                         <Button onClick={handleCreateRoadmap} className="flex items-center">
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Créer votre première roadmap
+                         </Button>
+                    </CardContent>
+                 </Card>
+            )}
+
+            {/* Display roadmaps in a responsive grid */}
+            {!loading && !error && roadmaps.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"> {/* Increased gap */}
+                    {roadmaps.map((roadmap) => (
+                        <RoadmapCard
+                            key={roadmap.id}
+                            name={roadmap.name}
+                            description={roadmap.description}
+                            slug={roadmap.slug}
+                            onClick={handleNavigateToRoadmap(roadmap.slug)}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

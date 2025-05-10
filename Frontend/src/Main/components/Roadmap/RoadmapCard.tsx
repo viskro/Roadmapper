@@ -9,12 +9,15 @@ export interface RoadmapCardProps {
 
 export default function RoadmapCard({ name, description, onClick }: RoadmapCardProps) {
     return (
-        <Card onClick={onClick} className="cursor-pointer hover:shadow-md transition-shadow bg-secondary">
+        <Card
+            onClick={onClick}
+            className="cursor-pointer hover:shadow-lg transition-shadow duration-200 ease-in-out" // Enhanced hover effect
+        >
             <CardHeader>
-                <CardTitle className="text-xl">{name}</CardTitle>
+                <CardTitle className="text-xl font-semibold">{name}</CardTitle> {/* Use font-semibold */}
             </CardHeader>
             <CardContent>
-                <p className="text-muted-foreground">{description}</p>
+                <p className="text-sm text-muted-foreground">{description}</p> {/* Use smaller text and muted-foreground */}
             </CardContent>
         </Card>
     );

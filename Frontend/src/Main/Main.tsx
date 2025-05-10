@@ -207,6 +207,12 @@ export default function Main({ roadmapSlug: propSlug }: MainProps = {}) {
         navigate("/create-roadmap");
     };
 
+    const handleItemModified = async () => {
+        if (currentRoadmap) {
+            await fetchRoadmapItems(currentRoadmap.id);
+        }
+    }
+
     // Rendu du composant
     return (
         <main className="flex flex-col gap-4 p-4 w-full">
@@ -262,6 +268,7 @@ export default function Main({ roadmapSlug: propSlug }: MainProps = {}) {
                                 isFirst={index === 0}
                                 isLast={index === items.length - 1}
                                 isFinished={item.isFinished}
+                                onItemModified={handleItemModified}
                             />
                             {index !== items.length - 1 && <MoveDown className="mt-4" />}
                         </div>
