@@ -74,16 +74,19 @@ const DirectionButton = ({ direction, id, isDisabled, updateOrder }: DirectionBu
     const Icon = direction === "up" ? ChevronUp : ChevronDown;
 
     return (
-        <Button
-            variant="ghost" // Use ghost variant for a subtle button
-            size="icon" // Use icon size for a small, square button
-            onClick={() => !isDisabled && updateOrder(id, direction)}
-            disabled={isDisabled}
-            className="hover:bg-accent hover:text-accent-foreground" // Add hover effect
-        >
-            <Icon className="h-4 w-4" />
-            <span className="sr-only">{`Move item ${direction}`}</span> {/* Add accessibility text */}
-        </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => !isDisabled && updateOrder(id, direction)}
+        disabled={isDisabled}
+        className={`hover:bg-accent hover:text-accent-foreground ${
+          isDisabled ? "hover:cursor-not-allowed" : "hover:cursor-pointer"
+        } `} // Add hover effect
+      >
+        <Icon className="h-4 w-4" />
+        <span className="sr-only">{`Move item ${direction}`}</span>{" "}
+        {/* Add accessibility text */}
+      </Button>
     );
 };
 
@@ -121,6 +124,12 @@ export function ItemCard({
     // Fonction de rappel pour mettre à jour l'état local
     const handleItemStatusChange = (newFinishedState: boolean) => {
         setItemFinished(newFinishedState);
+        if (onItemModified) {
+            onItemModified();
+        }
+    }
+
+    const handleItemUpdate = () => {
         if (onItemModified) {
             onItemModified();
         }
@@ -167,7 +176,7 @@ export function ItemCard({
                         {/* Boutons de suppression et modification */}
                         <div className="flex flex-col items-center gap-2">
                             <DeleteButton id={id} />
-                            <UpdateButton id={id} title={title} description={description} />
+                            <UpdateButton id={id} title={title} description={description} onItemUpdated={handleItemUpdate}/>
                         </div>
                     </div>
                 </div>

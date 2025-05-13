@@ -10,7 +10,7 @@ import { handleError, handleApiError } from "@/utils/errorUtils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Import Alert components
 import { ExclamationTriangleIcon, CheckCircledIcon } from "@radix-ui/react-icons"; // Optional: Add icons for alerts
 import { Loader2 } from "lucide-react"; // Import Loader2 icon
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+
 
 export function CreateRoadmap() {
     const [name, setName] = useState("");
@@ -19,8 +19,6 @@ export function CreateRoadmap() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-
-    const navigate = useNavigate(); // Initialize useNavigate
 
     const categories = [
         "Langages",
@@ -60,7 +58,7 @@ export function CreateRoadmap() {
                 setTimeout(() => {
                     // Consider navigating to the new roadmap or dashboard instead of reloading
                     // navigate(`/roadmap/${result.data.slug}`); // Assuming slug is returned
-                    navigate("/dashboard"); // Or navigate to dashboard
+                    window.location.reload();
                 }, 1500); // Redirect after 1.5 seconds
             }
 
@@ -147,7 +145,7 @@ export function CreateRoadmap() {
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="mt-2 w-full" // Make button full width
+                            className="mt-2 w-full hover:cursor-pointer" // Make button full width
                         >
                             {loading ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

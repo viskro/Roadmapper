@@ -52,10 +52,14 @@ try {
     }
 
     // Extraction et nettoyage des données validées
-    $title = htmlspecialchars($data['title']);
-    $description = htmlspecialchars($data['description']);
-    $roadmap_id = (int)$data['roadmap_id']; // Conversion explicite en entier pour sécurité
+    // $title = htmlspecialchars($data['title']);
+    // $description = htmlspecialchars($data['description']);
+    // $roadmap_id = (int)$data['roadmap_id']; // Conversion explicite en entier pour sécurité
 
+    $title = $data['title'];
+    $description = $data['description'];
+    $roadmap_id = (int)$data['roadmap_id']; 
+    
     // Vérifier que la roadmap existe et appartient à l'utilisateur
     $roadmap = $roadmapModel->getById($roadmap_id);
     if (!$roadmap) {

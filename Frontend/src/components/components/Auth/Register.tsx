@@ -135,7 +135,7 @@ export function Register() {
                                 />
                             </div>
 
-                            <Button type="submit" className="w-full" disabled={loading}> {/* Make button full width */}
+                            <Button type="submit" className="w-full hover:cursor-pointer" disabled={loading}> {/* Make button full width */}
                                 {loading ? (
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 ) : (

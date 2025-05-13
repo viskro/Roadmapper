@@ -46,9 +46,6 @@ export function Login() {
                 // Forcer un rafraîchissement de l'état d'authentification
                 await refreshAuth();
 
-                // Attendre encore un peu avant de rediriger
-                await new Promise(resolve => setTimeout(resolve, 500));
-
                 console.log("Redirection vers la page d'accueil...");
                 navigate("/", { replace: true });
             } else {

@@ -183,9 +183,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarHeader className="p-4 border-b border-border"> {/* Use border-border */}
                 <Link to="/dashboard" className="flex items-center gap-3 mb-4"> {/* Increased gap */}
                     {/* Enhanced Logo/Title Area */}
-                    <div className="flex items-center justify-center h-10 w-10 rounded-md bg-primary text-primary-foreground"> {/* Styled icon container */}
-                         <LayoutGrid className="h-6 w-6" />
-                    </div>
+
                     <h1 className="text-2xl font-bold text-foreground">Roadmapper</h1> {/* Use text-foreground */}
                 </Link>
                  {/* Search Input with subtle styling */}

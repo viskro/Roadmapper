@@ -72,8 +72,11 @@ try {
     }
 
     // Extraction et nettoyage des données
-    $title = htmlspecialchars($data['title']);
-    $description = htmlspecialchars($data['description']);
+    // $title = htmlspecialchars($data['title']);
+    // $description = htmlspecialchars($data['description']);
+
+    $title = $data['title'];
+    $description = $data['description'];
 
     // Mise à jour de l'item
     $itemUpdated = $itemModel->update($id, $title, $description);

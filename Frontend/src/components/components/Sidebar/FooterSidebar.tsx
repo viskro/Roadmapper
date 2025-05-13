@@ -34,6 +34,9 @@ interface FooterSidebarProps {
 export function FooterSidebar({ user, onLogout }: FooterSidebarProps) {
   const { isMobile } = useSidebar();
 
+  const avatarSrc = user.avatar
+    ? user.avatar
+    : "https://ui-avatars.com/api/?name=" + user.username;
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -44,7 +47,7 @@ export function FooterSidebar({ user, onLogout }: FooterSidebarProps) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.username} />
+                <AvatarImage src={avatarSrc} alt={user.username} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
