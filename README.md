@@ -1,6 +1,5 @@
 # Roadmapper
 
-![Logo Roadmapper](https://via.placeholder.com/200x80?text=Roadmapper)
 
 ## 📝 Présentation
 
@@ -64,7 +63,7 @@ L'application est construite selon une architecture client-serveur classique :
 3. Configurez les paramètres de connexion dans `Backend/config/config.php`
 
 ### Installation du backend
-1. Clonez ce dépôt : `git clone https://github.com/votre-utilisateur/roadmapper.git`
+1. Clonez ce dépôt : `git clone https://github.com/viskro/Roadmapper.git`
 2. Placez le dossier `Backend` dans votre serveur web
 3. Assurez-vous que les permissions sont correctement configurées
 
