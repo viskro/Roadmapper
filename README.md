@@ -43,7 +43,6 @@ L'application est construite selon une architecture client-serveur classique :
 
 ### Backend
 - API RESTful développée en PHP
-- Architecture MVC pour une meilleure organisation du code
 - Gestion de l'authentification via sessions PHP
 - Modèles pour la manipulation des données (Roadmap, Item, User)
 - Base de données MySQL pour le stockage persistant
